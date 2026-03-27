@@ -1,0 +1,226 @@
+{
+  "name": "Automation 1",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "**Form Automation**\n\n*Taking the input in form and sending an email to that entered email in form*\n",
+        "height": 112,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -992,
+        -240
+      ],
+      "typeVersion": 1,
+      "id": "2275587e-7fef-4946-ae74-6953caae1727",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "formTitle": "Rutwik Consultation Form",
+        "formDescription": "Hey Glad to Meet you.\nPlease fill Details so as to connect with Rutwik for Consultation",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Service",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Consultation"
+                  },
+                  {
+                    "option": "Training"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "Submit"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -896,
+        -96
+      ],
+      "id": "3025b81d-4845-4b3f-bcea-4fc20522f2f2",
+      "name": "On form submission",
+      "webhookId": "80e67917-711a-479c-9876-74281062b7d1",
+      "retryOnFail": false,
+      "notesInFlow": true,
+      "notes": "My First Form"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1HtLdbkl9fitljSuNaoUbV5Pf7Z6wrpOnm_82d-yAcws",
+          "mode": "list",
+          "cachedResultName": "Form Automation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HtLdbkl9fitljSuNaoUbV5Pf7Z6wrpOnm_82d-yAcws/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HtLdbkl9fitljSuNaoUbV5Pf7Z6wrpOnm_82d-yAcws/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.Name }}",
+            "Service": "={{ $json.Service }}",
+            "Time": "={{ $json.submittedAt }}",
+            "Email": "={{ $json.Email }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Service",
+              "displayName": "Service",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -688,
+        -96
+      ],
+      "id": "898bd2f2-8e32-4576-9907-1e054eb87cb5",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YUvEs5AoCp0tuVLS",
+          "name": "Google Sheets OAuth2 API"
+        }
+      },
+      "notes": "My First Sheet"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Form Lead Update",
+        "emailType": "text",
+        "message": "=Hey  {{ $('On form submission').item.json.Name }} How are you ? \n\nThere is a new lead on the Form\n\nName : {{ $json.Name }}\nService : {{ $json.Service }}\nTime : {{ $json.Time }}\n\nSource : {{ $workflow.id }}\n\nThanks,\nYour Awesome workflow",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -480,
+        -96
+      ],
+      "id": "7f4eabd5-7637-4baf-843d-159a424f886a",
+      "name": "Send a message",
+      "webhookId": "343a81de-4e4a-4a6f-b3ee-efd913b59e99",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "N2S3VSwVBoTOc1A1",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9ae3b815-82ce-41bf-8220-6a8c06ba1cb4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cd57c4a05101fcca4c36a4a2052a6df75635a1a2650dda21fc8bf985b7877967"
+  },
+  "id": "85KnZeGlWEe09pwK",
+  "tags": [
+    {
+      "updatedAt": "2026-03-26T17:46:48.191Z",
+      "createdAt": "2026-03-26T17:46:48.191Z",
+      "id": "oHEQijgJHlk2B5fE",
+      "name": "learnn8n"
+    }
+  ]
+}
