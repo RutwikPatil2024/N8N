@@ -1,0 +1,311 @@
+{
+  "name": "Prediction Based on Name",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Enter Details",
+        "formDescription": "Enter Your Name to Get Nationality and Age based on your Name Check you email Inbox",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -416,
+        -160
+      ],
+      "id": "c5b55db4-16af-4e78-87f6-3872875bdba6",
+      "name": "On form submission",
+      "webhookId": "44cc4b42-9275-40e3-b79b-e906c3a80210"
+    },
+    {
+      "parameters": {
+        "url": "https://api.agify.io/?",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.Name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -208,
+        -160
+      ],
+      "id": "530ccd8a-2ebd-4d03-a950-2a390df187db",
+      "name": "HTTP Request3",
+      "notesInFlow": true,
+      "notes": "Get Age based on Name"
+    },
+    {
+      "parameters": {
+        "url": "https://api.genderize.io/?",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        0,
+        -160
+      ],
+      "id": "fba941ea-7204-4b83-87a5-746d7968d929",
+      "name": "HTTP Request4",
+      "notesInFlow": true,
+      "notes": "Based on Name decide Gender"
+    },
+    {
+      "parameters": {
+        "url": "https://api.nationalize.io/?",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        -160
+      ],
+      "id": "3e045ef7-1d21-4695-afbc-116495e02bce",
+      "name": "HTTP Request5",
+      "notes": "Get Nationality based on Name"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "16VCQCYXHkhEx0pZALJWQZBVOxauI2hrnxnF-tu7Tthc",
+          "mode": "list",
+          "cachedResultName": "Potential_Customer",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16VCQCYXHkhEx0pZALJWQZBVOxauI2hrnxnF-tu7Tthc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16VCQCYXHkhEx0pZALJWQZBVOxauI2hrnxnF-tu7Tthc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('HTTP Request3').item.json.count }}",
+            "Name": "={{ $('HTTP Request3').item.json.name }}",
+            "Email": "={{ $('On form submission').item.json.Email }}",
+            "Age": "={{ $('HTTP Request3').item.json.age }}",
+            "Gender": "={{ $('HTTP Request4').item.json.gender }}",
+            "Nationality": "={{ $json.country[0].country_id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nationality",
+              "displayName": "Nationality",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        -160
+      ],
+      "id": "d2f06acb-f77a-4c72-a6f0-078a50f988b9",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YUvEs5AoCp0tuVLS",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Analysis Based on Your Name",
+        "emailType": "text",
+        "message": "=Below is Detailed Analysis based on Provided Details\nName : {{ $json.Name }}\nAge : {{ $json.Age }}\nGender : {{ $json.Gender }}\nNationality : {{ $json.Nationality }}\n\nTo Help Your Friends also know about this share with them \nThank You",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        -160
+      ],
+      "id": "8fb3bbb5-4ebb-45e4-a37c-66f07d41a6b7",
+      "name": "Send a message",
+      "webhookId": "b3a4019a-526c-43fb-8ae5-e43c4dc9101a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "N2S3VSwVBoTOc1A1",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "49193b9f-c3bd-49c6-80a6-77f6ba0ba101",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cd57c4a05101fcca4c36a4a2052a6df75635a1a2650dda21fc8bf985b7877967"
+  },
+  "id": "DSR3AYWGusZOy86O",
+  "tags": []
+}
