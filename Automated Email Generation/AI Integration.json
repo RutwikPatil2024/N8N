@@ -1,0 +1,378 @@
+{
+  "name": "AI Integration",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Enter Details",
+        "formDescription": "Enter Your Name to Get Nationality and Age based on your Name Check you email Inbox",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c5a1eff4-e7e4-4ae9-9f72-6d89dfb768e4",
+      "name": "On form submission",
+      "webhookId": "b7d148a2-0ba6-4276-8783-44dfa3d102d5"
+    },
+    {
+      "parameters": {
+        "url": "https://api.agify.io/?",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.Name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "27c72725-e3ea-438e-a1ef-944d7eff816b",
+      "name": "HTTP Request3",
+      "notesInFlow": true,
+      "notes": "Get Age based on Name"
+    },
+    {
+      "parameters": {
+        "url": "https://api.genderize.io/?",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "695e5164-bd6d-4d72-a495-4d0177841c56",
+      "name": "HTTP Request4",
+      "notesInFlow": true,
+      "notes": "Based on Name decide Gender"
+    },
+    {
+      "parameters": {
+        "url": "https://api.nationalize.io/?",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        624,
+        0
+      ],
+      "id": "656fc930-f0aa-4e62-8a70-1ae3c2ccfde8",
+      "name": "HTTP Request5",
+      "notes": "Get Nationality based on Name"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "16VCQCYXHkhEx0pZALJWQZBVOxauI2hrnxnF-tu7Tthc",
+          "mode": "list",
+          "cachedResultName": "Potential_Customer",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16VCQCYXHkhEx0pZALJWQZBVOxauI2hrnxnF-tu7Tthc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16VCQCYXHkhEx0pZALJWQZBVOxauI2hrnxnF-tu7Tthc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('HTTP Request3').item.json.count }}",
+            "Name": "={{ $('HTTP Request3').item.json.name }}",
+            "Email": "={{ $('On form submission').item.json.Email }}",
+            "Age": "={{ $('HTTP Request3').item.json.age }}",
+            "Gender": "={{ $('HTTP Request4').item.json.gender }}",
+            "Nationality": "={{ $json.country[0].country_id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nationality",
+              "displayName": "Nationality",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        0
+      ],
+      "id": "b8ad372a-6f02-49fe-8fa7-69d853d8010c",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YUvEs5AoCp0tuVLS",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are an AI email generator inside an automation workflow (n8n).\n\nYour task is to generate a professional, clean, and visually appealing email based on dynamic user data.\n\nSTRICT REQUIREMENTS:\n- Return ONLY valid raw JSON\n- Do NOT include markdown, code blocks, explanations, or extra text\n- Do NOT wrap JSON in a string\n- Output must be directly parseable JSON\n- Avoid escape characters like \\n or \\\"\n- Ensure proper JSON formatting\n\nOUTPUT FORMAT:\n{\n  \"subject\": \"...\",\n  \"body\": \"complete HTML email\"\n}\n\nCONTEXT:\nThis email is automatically generated from our application after capturing user details. It should look polished and suitable for professional communication or sharing.\n\nDYNAMIC DATA:\nName: {{ $json.Name }}\nAge: {{ $json.Age }}\nGender: {{ $json.Gender }}\nNationality: {{ $json.Nationality }}\n\nEMAIL REQUIREMENTS:\n- Use full HTML structure: <!DOCTYPE html>, <html>, <head>, <body>\n- Use inline CSS only (no external styles)\n- Create a modern card-style layout with a clean design\n- Include a header, content section, and footer\n- Clearly display user details in a structured format (table or card)\n- Maintain professional tone with slight friendliness\n- Add a call-to-action encouraging sharing with friends\n- Ensure proper spacing, typography, and readability\n\nSTYLE:\n- Professional and minimal\n- Slightly engaging but not casual\n- Suitable for automated system emails\n\nFINAL NOTE:\nReturn ONLY the JSON object with \"subject\" and \"body\""
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "0cc3723f-82eb-4f18-aacc-1e72659f38c6",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sFusMuGTJu2lGPIk",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $json.output[0].content[0].text;\nconst parsed = JSON.parse(raw);\n\nreturn [\n  {\n    json: parsed\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1424,
+        0
+      ],
+      "id": "533ef8e6-8a3a-495b-97d7-9d55b8b1c17d",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Append row in sheet').item.json.Email }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1632,
+        0
+      ],
+      "id": "ffae7c2e-505d-42b6-ba2f-eb934baf1e1b",
+      "name": "Send a message",
+      "webhookId": "579b70b9-4f70-4a2a-b52d-069ec9ee0129",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "N2S3VSwVBoTOc1A1",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "7c662306-24ba-4af6-9ed6-b2d02a49693c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cd57c4a05101fcca4c36a4a2052a6df75635a1a2650dda21fc8bf985b7877967"
+  },
+  "id": "gNurQCRVVkjxySRN",
+  "tags": []
+}
